@@ -36,6 +36,24 @@ function onDocumentMouseUp(event) {
   document.removeEventListener("mouseup", onDocumentMouseUp, false);
 }
 
+function addSimpleMarker(latitude, longitude, scene, earthMesh) {
+  const markerGeometry = new THREE.SphereGeometry(0.005, 8, 8);
+  const markerMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+  const markerMesh = new THREE.Mesh(markerGeometry, markerMaterial);
+
+  const phi = latitude * (Math.PI / 180);
+  const theta = (180 + longitude) * (Math.PI / 180);
+
+  const radius = 0.5; // Radius of the Earth
+  const x = -radius * Math.cos(phi) * Math.cos(theta);
+  const y = radius * Math.sin(phi);
+  const z = radius * Math.cos(phi) * Math.sin(theta);
+
+  markerMesh.position.set(x, y, z);
+
+  earthMesh.add(markerMesh);
+}
+
 // main components of three js scenes are :
 // camera
 // light
@@ -55,7 +73,7 @@ function main() {
   const earthGeometry = new THREE.SphereGeometry(0.5, 32, 32);
   const earthMaterial = new THREE.MeshPhongMaterial({
     // wireframe: true,
-    map: new THREE.TextureLoader().load("assets/earthmap.jpeg"),
+    map: new THREE.TextureLoader().load("assets/8k_earth_daymap.jpg"),
     bumpMap: new THREE.TextureLoader().load("assets/earthbump.jpeg"),
     bumpScale: 0.01,
   });
@@ -97,6 +115,9 @@ function main() {
 
   animate();
   document.addEventListener("mousedown", onDocumentMouseDown, false);
+  addSimpleMarker(40.7128, -74.006, scene, earthMesh); // New York City
+  //   addSimpleMarker(28.40315, 77.31056, scene, earthMesh); // Faridabad
+  addSimpleMarker(28.7041, 77.1025, scene, earthMesh); //delhi
 }
 
 window.onload = main;
